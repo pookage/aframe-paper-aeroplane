@@ -10,6 +10,10 @@
 
 			const box = document.getElementById("joy-box");
 
+			box.addEventListener("joystick-pitch-updated", logNewState);
+			box.addEventListener("joystick-yaw-updated", logNewState);
+			box.addEventListener("joystick-roll-updated", logNewState);
+			box.addEventListener("joystick-throttle-updated", logNewState);
 			box.addEventListener("joystick-trigger-updated", logNewState);
 
 			function logNewState(event){

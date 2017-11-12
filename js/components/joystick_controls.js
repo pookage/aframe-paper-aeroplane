@@ -131,7 +131,7 @@ AFRAME.registerComponent("joystick_controls", {
 			const controllerUpdated = Object.keys(topLevelChanges).length > 0;
 			if(controllerUpdated){
 
-				let topKey, topChange, deepKey, deepChange, deepLevelChanges, deepLevelUpdated;
+				let topKey, topChange, deepKey, deepChange, deepLevelChanges, deepLevelUpdated, detail;
 				for(topKey in topLevelChanges){
 					topChange        = topLevelChanges[topKey];
 					deepLevelChanges = AFRAME.utils.diff(this.gamepadState[topKey], newGamepadState[topKey]);
@@ -139,7 +139,8 @@ AFRAME.registerComponent("joystick_controls", {
 						//...and then emit an event specific to that change on the element...
 						for(deepKey in deepLevelChanges){
 							deepChange = deepLevelChanges[deepKey];
-							this.el.emit(`joystick-${deepKey}-updated`, { value: deepChange })
+							detail     = { property: deepKey, value: deepChange };
+							this.el.emit(`joystick-${deepKey}-updated`, detail)
 						}
 				}
 
