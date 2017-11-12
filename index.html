@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Paper Aeroplane Test</title>
+	<script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
+	<script src="js/components/joystick_controls.js"></script>
+	<script>
+		window.addEventListener("load", () => {
+
+			const box = document.getElementById("joy-box");
+
+			box.addEventListener("joystick-trigger-updated", logNewState);
+
+			function logNewState(event){
+				const controllerState = event.detail;
+
+				console.log(controllerState);
+			}
+
+		});
+	</script>
+</head>
+<body>
+	<a-scene>
+		<a-box
+			id="joy-box"
+			joystick_controls
+			position="0 0 -5"
+			color="red">
+		</a-box>
+	</a-scene>
+</body>
+</html>
