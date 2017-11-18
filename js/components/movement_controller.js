@@ -10,17 +10,27 @@ AFRAME.registerComponent("movement_controller", {
 	//-----------------------------------------
 	init: function(){
 
+		const element    = this.el;
+
+		//scope binding
 		this.updateSpeed = this.updateSpeed.bind(this);
 		this.updateRoll  = this.updateRoll.bind(this);
 		this.updatePitch = this.updatePitch.bind(this);
 		this.updateYaw   = this.updateYaw.bind(this);
 
+		//setup
+		this.markers     = {
+			front: this.createPositionMarker("front"),
+			rear: this.createPositionMarker("rear")
+		}
+		for(let marker in this.markers) element.appendChild(this.markers[marker]);
 		this.addListeners();
 
 	},//init
 	remove: function(){
 		this.removeListeners();
 	},//remove
+	
 
 	//EVENT MANAGEMENT
 	//-----------------------------------------
@@ -64,6 +74,24 @@ AFRAME.registerComponent("movement_controller", {
 	///////////////////////////////////////////	
 	//HANDLING/////////////////////////////////
 	///////////////////////////////////////////
+	createPositionMarker: function(type){
+		const marker = document.createElement("a-sphere");
+		let color, position, scale;
+		switch(type){
+			case "front":
+				color    = "red";
+				position = "0 0 -1"
+				break;
+			case "rear":
+				color    = "blue";
+				position = "0 0 1"
+				break;
+		}
+		marker.setAttribute("material", `color: ${color}`);
+		marker.setAttribute("position", position);
+		marker.setAttribute("scale", "0.25 0.25 0.25");
+		return marker;
+	},//createPositionMarker
 	updateSpeed: function(event){
 		const element = this.el;
 		const speed   = event.detail.value;
@@ -96,7 +124,7 @@ AFRAME.registerComponent("movement_controller", {
 
 		const inputScalar   = event.detail.value * 90 || 0;
 		const { x, y, z }   = element.getAttribute("rotation");
-		const yawRotation = 1 * inputScalar
+		const yawRotation = (1 * inputScalar);
 		const newRotation   = new THREE.Vector3(x, yawRotation, z); //use later for iterative slow increases
 
 		element.setAttribute("rotation", newRotation)

@@ -16,6 +16,8 @@ AFRAME.registerPrimitive("a-chase-camera", {
 		}
 	},
 	mappings: {
+		rotation: "chase_camera.rotation",
+		position : "chase_camera.position",
 		chase: "chase_camera.chase",
 		near: "chase_camera.near",
 		far: "chase_camera.far"
@@ -27,25 +29,36 @@ AFRAME.registerComponent("chase_camera", {
 	//-------------------------------
 	schema: {
 		chase: {
-			type: "selector"
+			type: "selector",
 		},
 		near: {
 			default: 5
 		},
 		far: {
 			default: 7.5
-		}
+		},
+		rotation: {},
+		position: {}
 	},
 
 	//LIFECYCLE METHODS
 	//--------------------------------
 	init: function(){
 
+
 		//scope binding
 		this.updateCameraDistance = this.updateCameraDistance.bind(this);
 
+
+
 		this.addListeners();
 	},//init
+	play: function(){
+		const element = this.el;
+		const data    = this.data;
+		if(data.rotation) element.setAttribute("rotation", data.rotation);
+		if(data.position) element.setAttribute("position", data.position);
+	},
 	remove: function(){
 		this.removeListeners();
 	},//remove

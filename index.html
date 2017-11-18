@@ -7,9 +7,11 @@
 	<link rel="stylesheet" href="css/stylage.css">
 
 	<script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
+	<script src="https://unpkg.com/aframe-terrain-model-component@0.2.3/dist/aframe-terrain-model-component.min.js"></script>
 	<script src="js/components/joystick_controls.js"></script>
 	<script src="js/components/movement_controller.js"></script>
 	<script src="js/components/chase_camera.js"></script>
+	<script src="js/components/paper_plane.js"></script>
 </head>
 <body>
 	<a-scene>
@@ -21,17 +23,20 @@
 			</a-asset-item>
 		</a-assets>
 
+		<!--TERRAIN-->
+		<a-entity 
+			terrain-model='DEM: url(assets/terrain/noctis-3500-clip-envi.bin); texture: url(assets/terrain/noctis-3500-clip-textureRED-resized.jpg); planeWidth: 346; planeHeight: 346; segmentsWidth: 199; segmentsHeight: 199; zPosition: 100;'>		
+		</a-entity>
 
+		<!--PAPER PLANE-->
 		<a-entity
 			id="paper-plane"
+			position="0 100 0"
 			movement_controller="input: joystick"
 			joystick_controls>
-			<a-obj-model
-				rotation="0 180 0"
-				scale="0.3 0.3 0.3" 
-				material="color: #aaa; roughness: 0.9"
-				src="#paper-plane-model">		
-			</a-obj-model>
+			<a-paper-plane
+				color="#aaa">
+			</a-paper-plane>
 			<a-chase-camera
 				chase="#paper-plane">
 			</a-chase-camera>
