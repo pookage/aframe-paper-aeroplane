@@ -16,9 +16,11 @@ AFRAME.registerPrimitive("a-chase-camera", {
 		}
 	},
 	mappings: {
-		"chase" : "chase_camera.chase"
+		chase: "chase_camera.chase",
+		near: "chase_camera.near",
+		far: "chase_camera.far"
 	}
-})
+});
 AFRAME.registerComponent("chase_camera", {
 
 	//SCHEMA
@@ -26,6 +28,12 @@ AFRAME.registerComponent("chase_camera", {
 	schema: {
 		chase: {
 			type: "selector"
+		},
+		near: {
+			default: 5
+		},
+		far: {
+			default: 7.5
 		}
 	},
 
@@ -33,13 +41,36 @@ AFRAME.registerComponent("chase_camera", {
 	//--------------------------------
 	init: function(){
 
-		const element = this.el;
-		const data    = this.data;
+		//scope binding
+		this.updateCameraDistance = this.updateCameraDistance.bind(this);
 
-		console.log(data.chase)
-
+		this.addListeners();
 	},//init
 	remove: function(){
+		this.removeListeners();
+	},//remove
 
-	}//remove
+
+	//EVENT HANDLING
+	//-------------------------------
+	addListeners: function(){
+		const chase = this.data.chase;
+		chase.addEventListener("speed-updated", this.updateCameraDistance);
+	},//addListeners
+	removeListeners: function(){
+		const chase = this.data.chase;
+		chase.removeEventListener("speed-updated", this.updateCameraDistance);
+	},//removeListeners
+	updateCameraDistance: function(event){
+		const element          = this.el;
+		const data             = this.data;
+		const { x, y, z }      = element.getAttribute("position");
+		const { near, far  }   = data;
+		const speedMultiplier  = event.detail.value;
+		const distanceDiff     = (far - near) * speedMultiplier;
+		const newDistance      = near + distanceDiff;
+		const newPosition      = { x, y, z: newDistance};
+
+		element.setAttribute("position", newPosition)
+	}//updateCameraDistance
 })
