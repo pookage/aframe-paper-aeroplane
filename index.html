@@ -3,10 +3,13 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Paper Aeroplane Test</title>
+
+	<link rel="stylesheet" href="css/stylage.css">
+
 	<script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
 	<script src="js/components/joystick_controls.js"></script>
 	<script src="js/components/movement_controller.js"></script>
-	<link rel="stylesheet" href="css/stylage.css">
+	<script src="js/components/chase_camera.js"></script>
 </head>
 <body>
 	<a-scene>
@@ -20,22 +23,19 @@
 
 
 		<a-entity
+			id="paper-plane"
 			movement_controller="input: joystick"
-			joystick_controls
-			position="0 1 -6">
+			joystick_controls>
 			<a-obj-model
 				rotation="0 180 0"
 				scale="0.3 0.3 0.3" 
 				material="color: #aaa; roughness: 0.9"
 				src="#paper-plane-model">		
 			</a-obj-model>
+			<a-chase-camera
+				chase="#paper-plane">
+			</a-chase-camera>
 		</a-entity>
-
-		<a-camera
-			rotation="-25 0 0"
-			position="0 2.5 0"
-			fov="60">
-		</a-camera>
 
 
 	</a-scene>

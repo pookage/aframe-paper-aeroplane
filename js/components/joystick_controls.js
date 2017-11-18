@@ -40,11 +40,11 @@ AFRAME.registerComponent("joystick_controls", {
 
 		//invert teh axis or not
 		this.invertAxes = {
-			pitch:    1,
-			yaw:     -1,
-			roll:    -1,
-			throttle: 1,
-			hat:      1
+			pitch:     1,
+			yaw:      -1,
+			roll:     -1,
+			throttle: -1,
+			hat:       1
 		};
 
 		//function binding

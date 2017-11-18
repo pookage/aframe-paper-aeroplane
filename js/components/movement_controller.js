@@ -65,7 +65,13 @@ AFRAME.registerComponent("movement_controller", {
 	//HANDLING/////////////////////////////////
 	///////////////////////////////////////////
 	updateSpeed: function(event){
-		const speed = event.detail.value;
+		const element = this.el;
+		const speed   = event.detail.value;
+		const clampedSpeed = (speed + 1) / 2;
+
+		element.emit("speed-updated", { value: clampedSpeed });
+
+		console.log(clampedSpeed)
 		//console.log("updating speed to : ", speed)
 	},//updateSpeed
 	updateRoll: function(event){
