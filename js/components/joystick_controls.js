@@ -111,6 +111,9 @@ AFRAME.registerComponent("joystick_controls", {
 		const controller = navigator.getGamepads()[0];
 		if(controller){
 
+			//store ref for element for ease of access
+			const element = this.el;
+
 			//store all the axies to variables for easier rounding
 			const axes     = controller.axes;
 			const buttons  = controller.buttons;
@@ -135,6 +138,10 @@ AFRAME.registerComponent("joystick_controls", {
 				}
 			};
 
+			const clampedSpeed = (newGamepadState.axes.throttle + 1) / 2;
+			newGamepadState.axes.throttle = clampedSpeed;
+			
+
 			//calculate which parts of the joystick have been moved...
 			const topLevelChanges   = AFRAME.utils.diff(this.gamepadState, newGamepadState);
 			const controllerUpdated = Object.keys(topLevelChanges).length > 0;
@@ -149,16 +156,44 @@ AFRAME.registerComponent("joystick_controls", {
 						for(deepKey in deepLevelChanges){
 							deepChange = deepLevelChanges[deepKey];
 							detail     = { property: deepKey, value: deepChange };
-							this.el.emit(`joystick-${deepKey}-updated`, detail)
+							element.emit(`joystick-${deepKey}-updated`, detail)
 						}
 				}
 
 				//...as well as emitting a general update event just in case
-				this.el.emit(`joystick-updated`, {...newGamepadState});
+				element.emit(`joystick-updated`, {...newGamepadState});
+			} else {
+				const activeInputs = this.getActiveInputs(newGamepadState);
+				if(Object.keys(activeInputs).length > 0){
+					let input, detail;
+					for(input in activeInputs){
+						detail = { property: input, value: activeInputs[input]}
+						element.emit(`joystick-${input}-updated`, detail);
+					}
+				}
 			}
 			this.gamepadState = newGamepadState;
 		}
 	},//updateControllerState
+	getActiveInputs: function(state){
+
+		const activeInputs = {};
+		const deadZone     = 0.05;
+
+		//check the axes for an active input
+		let input, value;
+		for(input in state.axes){
+			if(input != "hat" && input != "throttle"){
+				value = state.axes[input];
+				if(value != 0){
+					if(value > deadZone || value < -deadZone){
+						activeInputs[input] = value;
+					}
+				}
+			}
+		}
+		return activeInputs;
+	},//getActiveInputs
 
 
 	//EVENT LISTENERS

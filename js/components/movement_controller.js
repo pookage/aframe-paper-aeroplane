@@ -17,8 +17,9 @@ AFRAME.registerComponent("movement_controller", {
 		this.updateYaw   = this.updateYaw.bind(this);
 
 		//setup
-		this.markers     = this.setupOrientationMarkers();
-		this.speedVector = new THREE.Vector3(0, 0, 0);
+		this.markers            = this.setupOrientationMarkers();
+		this.accelerationVector = new THREE.Vector3(0, 0, 0);
+		this.rotationSpeed      = new THREE.Vector3(5, 3, 3); //pitch, yaw, roll
 
 		this.addListeners();
 
@@ -32,7 +33,7 @@ AFRAME.registerComponent("movement_controller", {
 		const directionVector  = this.calculateDirectionVector();
 		const {x, y, z}        = element.getAttribute("position");
 		const currentPosition  = new THREE.Vector3(x, y, z);
-		const nextPositionStep = directionVector.multiply(this.speedVector);
+		const nextPositionStep = directionVector.multiply(this.accelerationVector);
 		const newPosition      = currentPosition.add(nextPositionStep);
 
 		element.setAttribute("position", newPosition)
@@ -85,41 +86,41 @@ AFRAME.registerComponent("movement_controller", {
 	//HANDLING/////////////////////////////////
 	///////////////////////////////////////////
 	updateSpeed: function(event){
-		const element = this.el;
-		const speed   = event.detail.value;
-		const clampedSpeed = (speed + 1) / 2;
+		const element      = this.el;
+		const speed        = event.detail.value;
+		
 
-		this.speedVector = new THREE.Vector3(clampedSpeed, clampedSpeed, clampedSpeed)
-
-		element.emit("speed-updated", { value: clampedSpeed });
-		//console.log("updating speed to : ", speed)
+		this.accelerationVector = new THREE.Vector3(speed, speed, speed)
+		element.emit("speed-updated", { value: speed });
 	},//updateSpeed
 	updateRoll: function(event){
 		const element      = this.el;
-		const inputScalar  = event.detail.value * 180 || 0;
+		const inputScalar  = event.detail.value;
 		const { x, y, z }  = element.getAttribute("rotation");
-		const rollRotation = 1 * inputScalar
-		const newRotation  = new THREE.Vector3(x, y, rollRotation); //use later for iterative slow increases
+		const rollRotation = this.rotationSpeed.z * inputScalar;
+		const newRoll      = z + rollRotation;
+		const newRotation  = new THREE.Vector3(x, y, newRoll); //use later for iterative slow increases
 
 		element.setAttribute("rotation", newRotation)
 	},//updateRoll
 	updatePitch: function(event){
 		const element = this.el;
-
-		const inputScalar   = event.detail.value * 180 || 0;
+		const inputScalar   = event.detail.value;
 		const { x, y, z }   = element.getAttribute("rotation");
-		const pitchRotation = 1 * inputScalar
-		const newRotation   = new THREE.Vector3(pitchRotation, y, z); //use later for iterative slow increases
+		const pitchRotation = this.rotationSpeed.x * inputScalar;
+		const newPitch      = x + pitchRotation;
+		const newRotation   = new THREE.Vector3(newPitch, y, z); //use later for iterative slow increases
 
 		element.setAttribute("rotation", newRotation)
 	},//updatePitch
 	updateYaw: function(event){
 		const element = this.el;
 
-		const inputScalar   = event.detail.value * 180 || 0;
-		const { x, y, z }   = element.getAttribute("rotation");
-		const yawRotation = (1 * inputScalar);
-		const newRotation   = new THREE.Vector3(x, yawRotation, z); //use later for iterative slow increases
+		const inputScalar = event.detail.value;
+		const { x, y, z } = element.getAttribute("rotation");
+		const yawRotation = this.rotationSpeed.y * inputScalar;
+		const newYaw      = y + yawRotation;
+		const newRotation = new THREE.Vector3(x, newYaw, z); //use later for iterative slow increases
 
 		element.setAttribute("rotation", newRotation)
 	},//updateYaw
