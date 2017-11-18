@@ -38,6 +38,15 @@ AFRAME.registerComponent("joystick_controls", {
 			}
 		};
 
+		//invert teh axis or not
+		this.invertAxes = {
+			pitch:    1,
+			yaw:      1,
+			roll:    -1,
+			throttle: 1,
+			hat:      1
+		};
+
 		//function binding
 		this.startListeningForInputs = this.startListeningForInputs.bind(this);
 		this.disconnectController    = this.disconnectController.bind(this);
@@ -115,11 +124,11 @@ AFRAME.registerComponent("joystick_controls", {
 			//rounding to 2dp on all axes
 			const newGamepadState = {
 				axes: {
-					pitch:    Math.round(pitch*100)/100,
-					yaw:      Math.round(yaw*100)/100,
-					roll :    Math.round(roll*100)/100,
-					throttle: Math.round(throttle*100)/100,
-					hat:      Math.round(hat*100)/100
+					pitch:    (Math.round(pitch*1000)/1000) * this.invertAxes.pitch,
+					yaw:      (Math.round(yaw*1000)/1000) * this.invertAxes.yaw,
+					roll :    (Math.round(roll*1000)/1000) * this.invertAxes.roll,
+					throttle: (Math.round(throttle*1000)/1000) * this.invertAxes.throttle,
+					hat:      (Math.round(hat*1000)/1000) * this.invertAxes.hat
 				},
 				buttons: {
 					trigger: trigger.pressed

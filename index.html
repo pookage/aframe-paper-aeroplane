@@ -5,34 +5,48 @@
 	<title>Paper Aeroplane Test</title>
 	<script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
 	<script src="js/components/joystick_controls.js"></script>
-	<script>
-		window.addEventListener("load", () => {
-
-			const box = document.getElementById("joy-box");
-
-			box.addEventListener("joystick-pitch-updated", logNewState);
-			box.addEventListener("joystick-yaw-updated", logNewState);
-			box.addEventListener("joystick-roll-updated", logNewState);
-			box.addEventListener("joystick-throttle-updated", logNewState);
-			box.addEventListener("joystick-trigger-updated", logNewState);
-
-			function logNewState(event){
-				const controllerState = event.detail;
-
-				console.log(controllerState);
-			}
-
-		});
-	</script>
+	<script src="js/components/movement_controller.js"></script>
+	<link rel="stylesheet" href="css/stylage.css">
 </head>
 <body>
 	<a-scene>
-		<a-box
-			id="joy-box"
+	
+		<a-assets>
+			<a-asset-item 
+				id="paper-plane-model" 
+				src="assets/paper-plane/PaperPlane.obj">	
+			</a-asset-item>
+		</a-assets>
+
+
+		<a-entity
+			movement_controller="input: joystick"
 			joystick_controls
-			position="0 0 -5"
-			color="red">
-		</a-box>
+			position="0 1 -6">
+			<a-obj-model
+				rotation="0 180 0"
+				scale="0.3 0.3 0.3" 
+				material="color: #ccc; roughness: 0.9"
+				src="#paper-plane-model">		
+			</a-obj-model>
+		</a-entity>
+
+		<a-camera
+			rotation="-10 0 0"
+			position="0 2.5 0"
+			fov="60">
+		</a-camera>
+
+
 	</a-scene>
+
+	<footer class="footer">
+		<p>
+			Paper plane model by 
+			<a href="https://poly.google.com/view/10BzsZ9cTGW" target="_self">
+				Naomi Chen
+			</a>.
+		</p>
+	</footer>
 </body>
 </html>
