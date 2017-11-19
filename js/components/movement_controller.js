@@ -99,29 +99,40 @@ AFRAME.registerComponent("movement_controller", {
 		const { x, y, z }  = element.getAttribute("rotation");
 		const rollRotation = this.rotationSpeed.z * inputScalar;
 		const newRoll      = z + rollRotation;
-		const newRotation  = new THREE.Vector3(x, y, newRoll); //use later for iterative slow increases
+		const newRotation  = new THREE.Vector3(x, y, newRoll);
+		const rotationAxis = new THREE.Vector3(0, 0, 1);
+		const quaternion   = new THREE.Quaternion();
 
+		quaternion.setFromAxisAngle(rotationAxis, this.convertToRadians(newRoll));
+		//newRotation.applyQuaternion(quaternion);
 		element.setAttribute("rotation", newRotation)
 	},//updateRoll
 	updatePitch: function(event){
-		const element = this.el;
+		const element       = this.el;
 		const inputScalar   = event.detail.value;
 		const { x, y, z }   = element.getAttribute("rotation");
 		const pitchRotation = this.rotationSpeed.x * inputScalar;
 		const newPitch      = x + pitchRotation;
 		const newRotation   = new THREE.Vector3(newPitch, y, z); //use later for iterative slow increases
-
+		const rotationAxis  = new THREE.Vector3(1, 0, 0);
+		const quaternion    = new THREE.Quaternion();
+		
+		quaternion.setFromAxisAngle(rotationAxis, this.convertToRadians(newPitch));
+		//newRotation.applyQuaternion(quaternion);
 		element.setAttribute("rotation", newRotation)
 	},//updatePitch
 	updateYaw: function(event){
-		const element = this.el;
+		const element      = this.el;
+		const inputScalar  = event.detail.value;
+		const { x, y, z }  = element.getAttribute("rotation");
+		const yawRotation  = this.rotationSpeed.y * inputScalar;
+		const newYaw       = y + yawRotation;
+		const newRotation  = new THREE.Vector3(x, newYaw, z); //use later for iterative slow increases
+		const rotationAxis = new THREE.Vector3(0, 1, 0);
+		const quaternion   = new THREE.Quaternion();
 
-		const inputScalar = event.detail.value;
-		const { x, y, z } = element.getAttribute("rotation");
-		const yawRotation = this.rotationSpeed.y * inputScalar;
-		const newYaw      = y + yawRotation;
-		const newRotation = new THREE.Vector3(x, newYaw, z); //use later for iterative slow increases
-
+		quaternion.setFromAxisAngle(rotationAxis, this.convertToRadians(newYaw));
+		//newRotation.applyQuaternion(quaternion);
 		element.setAttribute("rotation", newRotation)
 	},//updateYaw
 
@@ -158,6 +169,7 @@ AFRAME.registerComponent("movement_controller", {
 		marker.setAttribute("material", `color: ${color}`);
 		marker.setAttribute("position", position);
 		marker.setAttribute("scale", "0.25 0.25 0.25");
+		marker.setAttribute("visible", false);
 		return marker;
 	},//createPositionMarker
 	calculateDirectionVector: function(){
@@ -167,5 +179,8 @@ AFRAME.registerComponent("movement_controller", {
 		const direction     = frontPosition.sub(rearPosition).normalize();
 		return direction;
 	},//calculateDirectionVector
+	convertToRadians: function(angle){
+		return angle * (Math.PI / 180)
+	}//convertToRadians
 
 });
